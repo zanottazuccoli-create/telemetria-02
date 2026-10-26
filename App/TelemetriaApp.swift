@@ -40,49 +40,35 @@ struct Dashboard: View {
     private var shown: TelemetrySnapshot { demo ? .example : data }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 6) {
-                Text("TELEMETRÍA / 02")
-                    .font(.system(size: 10, weight: .bold, design: .monospaced))
-                    .foregroundStyle(.orange)
-                Text(Date(), style: .time)
-                    .font(.system(size: 34, weight: .semibold, design: .monospaced))
-                    .foregroundStyle(.orange)
-                if demo {
-                    Text("DEMOSTRACIÓN · DATOS FICTICIOS")
-                        .font(.system(size: 9, weight: .bold)).foregroundStyle(.orange)
-                }
-                IndustrialPanel(label: "PASOS", value: TelemetrySnapshot.number(shown.dailyValue(shown.steps)), symbol: "figure.walk")
-                HStack(spacing: 5) {
-                    IndustrialPanel(label: "KCAL", value: TelemetrySnapshot.number(shown.dailyValue(shown.kilocalories)), symbol: "flame", compact: true)
-                    IndustrialPanel(label: "KM", value: TelemetrySnapshot.number(shown.dailyValue(shown.kilometers), decimals: 1), symbol: "location", compact: true)
-                }
-                IndustrialPanel(label: "ÚLTIMO PULSO", value: TelemetrySnapshot.number(shown.pulse), symbol: "heart", compact: true)
-                if let pulseAt = shown.pulseAt {
-                    Text("Lectura: \(pulseAt.formatted(date: .abbreviated, time: .shortened))")
-                        .font(.system(size: 9)).foregroundStyle(.secondary)
-                }
-                Text(Date(), format: .dateTime.day().month(.wide))
-                    .font(.system(size: 13, weight: .bold, design: .monospaced))
-                    .foregroundStyle(.orange)
-                if !demo {
-                    if let updated = data.updatedAt {
-                        Text("Consulta: \(updated.formatted(date: .abbreviated, time: .shortened))")
-                            .font(.system(size: 9)).foregroundStyle(.secondary)
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(spacing: 12) {
+                    TelemetryFace(snapshot: shown, demo: demo)
+                        .frame(height: geometry.size.height)
+                    VStack(spacing: 8) {
+                        if let pulseAt = shown.pulseAt {
+                            Text("Pulso: \(pulseAt.formatted(date: .abbreviated, time: .shortened))")
+                                .font(.system(size: 10)).foregroundStyle(.secondary)
+                        }
+                        if !demo {
+                            if let updated = data.updatedAt {
+                                Text("Consulta: \(updated.formatted(date: .abbreviated, time: .shortened))")
+                                    .font(.system(size: 10)).foregroundStyle(.secondary)
+                            }
+                            Text("— = sin datos accesibles. El pulso no es una medición continua.")
+                                .font(.system(size: 10)).foregroundStyle(.secondary)
+                        }
+                        Button("Conectar Salud") { Task { await refresh(requestAccess: true) } }
+                            .disabled(busy || demo)
+                        Button(busy ? "Actualizando…" : "Actualizar") { Task { await refresh(requestAccess: false) } }
+                            .disabled(busy || demo)
+                        Toggle("Ver demostración", isOn: $demo).font(.footnote)
+                        if let errorText { Text(errorText).font(.footnote).foregroundStyle(.orange) }
                     }
-                    Text("— = sin datos accesibles. El pulso no es una medición continua.")
-                        .font(.system(size: 9)).foregroundStyle(.secondary)
                 }
-                Button("Conectar Salud") { Task { await refresh(requestAccess: true) } }
-                    .disabled(busy || demo)
-                Button(busy ? "Actualizando…" : "Actualizar") { Task { await refresh(requestAccess: false) } }
-                    .disabled(busy || demo)
-                Toggle("Ver demostración", isOn: $demo).font(.footnote)
-                if let errorText { Text(errorText).font(.footnote).foregroundStyle(.orange) }
             }
-            .padding(.horizontal, 2)
+            .background(.black)
         }
-        .background(.black)
         .onChange(of: phase) { _, value in
             if value == .active && !demo { Task { await refresh(requestAccess: false) } }
         }
