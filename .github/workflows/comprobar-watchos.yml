@@ -20,4 +20,6 @@ jobs:
           fi
       - name: Compilar para simulador
         run: bash build-on-mac.sh
+      - name: Arrancar demostración en simulador
+        run: bash simulator-preview.sh
     # No certificates, Apple credentials, caches or artifact uploads.

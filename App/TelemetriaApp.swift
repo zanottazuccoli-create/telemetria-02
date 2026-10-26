@@ -34,7 +34,7 @@ final class RefreshDelegate: NSObject, WKApplicationDelegate {
 struct Dashboard: View {
     @Environment(\.scenePhase) private var phase
     @State private var data = SnapshotStore.read()
-    @State private var demo = false
+    @State private var demo = ProcessInfo.processInfo.arguments.contains("--demo")
     @State private var busy = false
     @State private var errorText: String?
     private var shown: TelemetrySnapshot { demo ? .example : data }
