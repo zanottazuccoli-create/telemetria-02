@@ -2,7 +2,9 @@
 
 Prototipo original de paneles naranjas para watchOS, con una app SwiftUI y complicaciones WidgetKit.
 
-**Estado: pendiente de la primera compilación para simulador. No está publicado en App Store ni disponible como esfera instalable.**
+**Estado: compilación para simulador superada el 26 de octubre de 2026 con Xcode 16.4 y SDK watchOS 11.5 (arm64 y x86_64), sin firma. No se ha ejecutado ni probado en un reloj real, y no es una esfera instalable.**
+
+[Ver ejecución correcta de GitHub Actions](https://github.com/zanottazuccoli-create/telemetria-02/actions/runs/40390601817). Código verificado: `3e63f441c07e88b23da3a909ec99b529ba5ec408`.
 
 ## Contenido
 
