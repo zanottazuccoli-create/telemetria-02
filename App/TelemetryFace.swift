@@ -16,7 +16,7 @@ struct TelemetryFace: View {
                     Text(demo ? "DEMO" : "SALUD").font(.system(size:7,weight:.bold,design:.monospaced))
                 }.foregroundStyle(orange)
                 TimelineView(.periodic(from:.now,by:60)) { context in
-                    SegmentDigits(text:context.date.formatted(.dateTime.hour(.twoDigits(amPM:.omitted)).minute()),color:orange)
+                    SegmentDigits(text:String(format:"%02d:%02d", Calendar.current.component(.hour,from:context.date), Calendar.current.component(.minute,from:context.date)),color:orange)
                 }.frame(height:34)
                 HStack(spacing:5) {
                     VStack(spacing:8) {
@@ -58,14 +58,17 @@ struct TelemetryFace: View {
                 Image(systemName:symbol)
                 Text(title).lineLimit(1).minimumScaleFactor(0.7)
                 Spacer(minLength:0)
-            }.font(.system(size:6,weight:.bold,design:.monospaced))
-            SegmentDigits(text:value,color:dimmed ? orange : .black).frame(height:18)
+            }.font(.system(size:5,weight:.bold,design:.monospaced))
+                .fixedSize(horizontal:false,vertical:true)
+            SegmentDigits(text:value,color:dimmed ? orange : .black).frame(height:16)
         }
-        .padding(.horizontal,5).padding(.vertical,3)
+        .padding(.horizontal,7).padding(.vertical,4)
         .frame(maxWidth:.infinity)
+        .fixedSize(horizontal:false,vertical:true)
         .foregroundStyle(dimmed ? orange : .black)
         .background(CutPanel().fill(LinearGradient(colors:dimmed ? [.black] : [orange,Color(red:1,green:0.68,blue:0.15),orange],startPoint:.topLeading,endPoint:.bottomTrailing)))
         .overlay(CutPanel().stroke(Color.gray,lineWidth:0.8))
         .accessibilityElement(children:.ignore).accessibilityLabel("\(title), \(value)")
     }
 }
+
