@@ -1,0 +1,23 @@
+name: Comprobar watchOS sin firma
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compilar:
+    # Public repository + standard runner only. Skip private repositories.
+    if: github.event.repository.private == false
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Preparar XcodeGen
+        run: |
+          if ! command -v xcodegen >/dev/null 2>&1; then
+            brew install xcodegen
+          fi
+      - name: Compilar para simulador
+        run: bash build-on-mac.sh
+    # No certificates, Apple credentials, caches or artifact uploads.

@@ -1,0 +1,68 @@
+name: Telemetria02
+options:
+  bundleIdPrefix: com.telemetria02
+  deploymentTarget:
+    watchOS: "10.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: 1
+    CODE_SIGN_STYLE: Automatic
+    TELEMETRIA_GROUP: group.com.telemetria02.shared
+targets:
+  Telemetria02:
+    type: application
+    platform: watchOS
+    sources:
+      - App
+      - Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.telemetria02.watch
+    info:
+      path: Config/App-Info.plist
+      properties:
+        CFBundleDisplayName: Telemetría 02
+        WKApplication: true
+        WKWatchOnly: true
+        TelemetriaGroup: $(TELEMETRIA_GROUP)
+        NSHealthShareUsageDescription: Mostrar tus pasos, distancia, energía activa y última lectura de pulso en tus paneles.
+    entitlements:
+      path: Config/App.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.security.application-groups:
+          - $(TELEMETRIA_GROUP)
+    dependencies:
+      - target: TelemetriaWidgets
+        embed: true
+  TelemetriaWidgets:
+    type: app-extension
+    platform: watchOS
+    sources:
+      - Widgets
+      - Shared/Snapshot.swift
+      - Shared/IndustrialPanel.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.telemetria02.watch.widgets
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
+    info:
+      path: Config/Widget-Info.plist
+      properties:
+        CFBundleDisplayName: Paneles Telemetría
+        TelemetriaGroup: $(TELEMETRIA_GROUP)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Config/Widget.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - $(TELEMETRIA_GROUP)
+schemes:
+  Telemetria02:
+    build:
+      targets:
+        Telemetria02: all
