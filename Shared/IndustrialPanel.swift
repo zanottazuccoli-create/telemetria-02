@@ -5,8 +5,8 @@ struct CutPanel: Shape {
     func path(in rect: CGRect) -> Path {
         let c = min(8.0, rect.height / 5)
         return Path { p in
-            p.move(to: CGPoint(x: c, y: 0))
             p.addLines([
+                CGPoint(x: c, y: 0),
                 CGPoint(x: rect.width - c, y: 0),
                 CGPoint(x: rect.width, y: c),
                 CGPoint(x: rect.width, y: rect.height - c),
@@ -61,3 +61,4 @@ private extension CutPanel {
         self.stroke(color, lineWidth: 1)
     }
 }
+
